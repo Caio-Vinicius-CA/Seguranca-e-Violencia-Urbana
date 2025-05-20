@@ -29,7 +29,7 @@ canvas {
 
 .table-container {
     display: block;
-    max-height: 750px;
+    max-height: 600px;
     overflow-y: auto;
     border: 1px solid #ccc;
 }

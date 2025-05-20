@@ -7,7 +7,22 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- jQuery (necessário para DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
+  
+
+
   </head>
   <body>
     <h1>Visualização de Dados - Violência Urbana</h1>
@@ -33,10 +48,11 @@
 
     <h2 class="heading">Tabela de Dados</h2>
     <div class="table-container">
-      <table id="tabela">
+      <table id="tabela" class="display">
         <thead>
           <tr>
-            <th>
+            <!-- Filtro Município -->
+            <th> 
               Município<br />
               <input
                 type="text"
@@ -45,6 +61,7 @@
                 data-col="0"
               />
             </th>
+            <!-- Filtro Região -->
             <th>
               Região<br />
               <select onchange="filtrarTabela()" class="filtro" data-col="1">
@@ -58,6 +75,7 @@
                 <option value="Zona da Mata">Zona da Mata</option>
               </select>
             </th>
+            <!-- Filtro Sexo -->
             <th>
               Sexo<br />
               <select onchange="filtrarTabela()" class="filtro" data-col="2">
@@ -67,6 +85,7 @@
                 <option value="Feminino">Feminino</option>
               </select>
             </th>
+            <!-- Filtro Natureza -->
             <th>
               Natureza Jurídica<br />
               <select onchange="filtrarTabela()" class="filtro" data-col="3">
@@ -79,6 +98,7 @@
                 </option>
               </select>
             </th>
+            <!-- Filtro Data -->
             <th>
               Data<br />
               <input
@@ -94,6 +114,7 @@
                 style="width: 100px"
               />
             </th>
+            <!-- Filtro Idade -->
             <th>
               Idade<br />
               <select

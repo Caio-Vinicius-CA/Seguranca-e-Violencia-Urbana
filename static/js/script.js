@@ -29,7 +29,6 @@ function preencherSelects(dados) {  // Preenche o select do gráfico
     const selectNatureza = document.getElementById('natureza');
     const naturezas = [...new Set(dados.map(d => d["NATUREZA JURIDICA"]))];
 
-
     regioes.forEach(regiao => {
         const option = document.createElement('option');
         option.value = regiao;
@@ -63,7 +62,6 @@ function parseDataBR(data) {
 
 function configurarIntervaloDatas(dados) {
     const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
-
     const minData = new Date(Math.min(...datasConvertidas));
     const maxData = new Date(Math.max(...datasConvertidas));
 
