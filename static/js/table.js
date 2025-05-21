@@ -2,15 +2,14 @@
 // INICIALIZAÇÃO E VARIÁVEIS GLOBAIS
 // ======================
 
-// Armazena os dados carregados do backend (only current page's data)
+// Armazena os dados carregados do backend
 let dadosGlobais = [];
 
-// Página atual da paginação (defaults to 1)
+// Página atual da paginação (padrão: 1)
 let currentPage = 1;
 
-// Número de itens por página
+// Número de ítens por página
 const perPage = 120;
-
 
 // ======================
 // CARREGAMENTO DE DADOS
@@ -22,7 +21,7 @@ const perPage = 120;
  */
 async function carregarDados(page = 1) {
     try {
-        showTableLoading(); // Show loading animation
+        showTableLoading(); // Animação de loading
         // 1. Fetch data from API with pagination parameters
         const resposta = await fetch(`/api/dados?page=${page}&per_page=${perPage}`);
         if (!resposta.ok) throw new Error('Network response was not ok');
@@ -30,38 +29,34 @@ async function carregarDados(page = 1) {
         // 2. Parse JSON response
         const dados = await resposta.json();
 
-
         console.log('API Response:', dados)
 
-        // 3. Handle both paginated and non-paginated responses
-        //    (paginated responses use 'data' property, non-paginated is array directly)
+        // 3. Lida com os dados paginados e não paginados
         dadosGlobais = dados.data ? dados.data : [];
         currentPage = page;
 
-        // 4. Update table with new data
+        // 4. Atualiza tabela com novos dados
         atualizarTabela(dadosGlobais);
 
-        // 5. Configure date range filters if they exist on page
+        // 5. Configura filtro de data
         if (document.getElementById("data-inicial")) {
             configurarIntervaloDatas(dadosGlobais);
         }
 
-        // 6. Update pagination controls with new metadata
+        // 6. Atualiza paginação
         updatePagination(dados.total, dados.pages, currentPage);
 
     } catch (error) {
         console.error("Error loading data:", error);
-        // Show user-friendly error message in pagination area
         document.getElementById('pagination').innerHTML =
             '<span style="color: red;">Erro ao carregar dados. Recarregue a página.</span>';
     } finally {
         hideTableLoading()
     }
-
 }
 
 // ======================
-// LOADING STATE FUNCTIONS
+// FUNÇÕES DE LOADING
 // ======================
 
 function showTableLoading() {
@@ -78,10 +73,8 @@ function hideTableLoading() {
     }
 }
 
-
-
 // ======================
-// DATE HANDLING SECTION
+// TRATAMENTO DE DADOS
 // ======================
 
 /**
@@ -106,7 +99,7 @@ function parseDataBR(data) {
  * @param {Array} dados - Array of data items containing DATE fields
  */
 function configurarIntervaloDatas(dados) {
-    // Validate input data
+    // Validar dados de entrada
     if (!dados || !Array.isArray(dados) || dados.length === 0) {
         console.warn("No valid data provided to configurarIntervaloDatas");
         return;
@@ -137,9 +130,8 @@ function configurarIntervaloDatas(dados) {
     }
 }
 
-
 // ======================
-// TABLE & PAGINATION SECTION
+// TABELA E PAGINAÇÃO
 // ======================
 
 /**
@@ -148,7 +140,7 @@ function configurarIntervaloDatas(dados) {
  */
 function atualizarTabela(dados) {
     const tbody = document.querySelector('#tabela tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+    tbody.innerHTML = ''; 
 
     // Create and append new rows for each data item
     dados.forEach(d => {
@@ -180,10 +172,8 @@ function updatePagination(totalItems, totalPages, currentPage) {
         return;
     }
 
-    // Clear existing buttons
     paginationDiv.innerHTML = '';
 
-    // Don't show pagination if only 1 page
     if (totalPages <= 1) return;
 
     // Create Previous button
@@ -194,7 +184,7 @@ function updatePagination(totalItems, totalPages, currentPage) {
     paginationDiv.appendChild(prevBtn);
 
     // Create page number buttons
-    const maxVisible = 18; // Show max 5 page buttons
+    const maxVisible = 18;
     let start = Math.max(1, currentPage - 2);
     let end = Math.min(totalPages, start + maxVisible - 1);
 
@@ -231,18 +221,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         await carregarDados();
     } catch (error) {
         console.error("Falha ao carregar dados iniciais:", error);
-        // Mostrar mensagem amigável ao usuário
     }
 });
 
-
 // ======================
-// FILTERING SECTION
+// FILTRAGEM
 // ======================
 
-/**
- * Filters table rows based on user input
- */
 function filtrarTabela() {
 
     showTableLoading()
@@ -261,8 +246,8 @@ function filtrarTabela() {
 
         // 4. Apply column filters
         filtros.forEach(filtro => {
-            const col = parseInt(filtro.dataset.col); // Column index to filter
-            const tipo = filtro.dataset.tipo || "texto"; // Filter type
+            const col = parseInt(filtro.dataset.col);
+            const tipo = filtro.dataset.tipo || "texto";
             const valorFiltro = filtro.value.toLowerCase();
             const celulaTexto = linha.children[col].textContent.toLowerCase();
 
@@ -285,7 +270,7 @@ function filtrarTabela() {
 
         // 5. Apply date range filtering
         if (dataInicial || dataFinal) {
-            const textoData = linha.children[4].textContent; // Get date from 5th column (index 4)
+            const textoData = linha.children[4].textContent;
             const [dia, mes, ano] = textoData.split('/');
             const dataLinha = new Date(`${ano}-${mes}-${dia}`);
 

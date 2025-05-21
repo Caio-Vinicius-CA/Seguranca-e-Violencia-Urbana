@@ -95,6 +95,33 @@ h2 {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+.nav a.active {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+
+.nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav a:hover::after {
+    width: 80%;
+}
+
+/* Melhor contraste para estado focado (acessibilidade) */
+.nav a:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
 /* ===== CHART CONTAINERS ===== */
 .chart-section {
     background: white;
