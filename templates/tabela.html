@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Violência Urbana</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- jQuery (necessário para DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css"
+    />
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <h1>Monitor de Violência Urbana</h1>
+        <nav class="nav">
+          <a href="/">Dashboard</a>
+          <a href="/tabela">Dados Completos</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1 class="heading">Tabela de Dados</h1>
+
+      <div class="table-container">
+        <!-- Add this loading overlay -->
+        <div id="table-loading" class="chart-loading">
+          <div class="spinner"></div>
+          <span>Carregando dados...</span>
+        </div>
+        <table id="tabela" class="display">
+          <thead>
+            <tr>
+              <!-- Filtro Município -->
+              <th>
+                Município<br />
+                <input
+                  type="text"
+                  onkeyup="filtrarTabela()"
+                  class="filtro"
+                  data-col="0"
+                />
+              </th>
+              <!-- Filtro Região -->
+              <th>
+                Região<br />
+                <select onchange="filtrarTabela()" class="filtro" data-col="1">
+                  <option value="">Todos</option>
+                  <option value="Agreste">Agreste</option>
+                  <option value="Capital">Capital</option>
+                  <option value="Região Metropolitana">
+                    Região Metropolitana
+                  </option>
+                  <option value="Sertão">Sertão</option>
+                  <option value="Zona da Mata">Zona da Mata</option>
+                </select>
+              </th>
+              <!-- Filtro Sexo -->
+              <th>
+                Sexo<br />
+                <select onchange="filtrarTabela()" class="filtro" data-col="2">
+                  <option value="">Todos</option>
+                  <option value="Desconhecido">Desconhecido</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Feminino">Feminino</option>
+                </select>
+              </th>
+              <!-- Filtro Natureza -->
+              <th>
+                Natureza Jurídica<br />
+                <select onchange="filtrarTabela()" class="filtro" data-col="3">
+                  <option value="">Todos</option>
+                  <option value="Homicidio">Homicidio</option>
+                  <option value="Feminicidio">Feminicidio</option>
+                  <option value="Latrocinio">Latrocinio</option>
+                  <option value="Lesões corporais seguida de morte">
+                    Lesões corporais seguida de morte
+                  </option>
+                </select>
+              </th>
+              <!-- Filtro Data -->
+              <th>
+                Data<br />
+                <input
+                  type="date"
+                  id="data-inicial"
+                  onchange="filtrarTabela()"
+                  style="width: 100px"
+                /><br />
+                <input
+                  type="date"
+                  id="data-final"
+                  onchange="filtrarTabela()"
+                  style="width: 100px"
+                />
+              </th>
+              <!-- Filtro Idade -->
+              <th>
+                Idade<br />
+                <select
+                  onchange="filtrarTabela()"
+                  class="filtro"
+                  data-col="5"
+                  data-tipo="faixa-etaria"
+                >
+                  <option value="">Todas</option>
+                  <option value="1-17">1-17</option>
+                  <option value="18-29">18-29</option>
+                  <option value="30-39">30-39</option>
+                  <option value="40-49">40-49</option>
+                  <option value="50-59">50-59</option>
+                  <option value="60-69">60-69</option>
+                  <option value="70-79">70-79</option>
+                  <option value="80-89">80-89</option>
+                  <option value="90-150">90+</option>
+                </select>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="pagination" style="margin-top: 20px"></div>
+    </main>
+    <script src="{{ url_for('static', filename='js/table.js') }}"></script>
+  </body>
+</html>

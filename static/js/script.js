@@ -1,125 +1,150 @@
-// ---------- INTEGRAçÃO E CRIAÇÃO ---------- //
+// ---------- GLOBAL VARIABLES ---------- //
+let dadosGlobais = [];  // Stores all loaded data
+let grafico = null;     // Main chart instance (by region)
+let graficoAno = null;  // Yearly chart instance
 
-let dadosGlobais = [];  // Armazenará os dados carregados do backend.
-let grafico = null;  // Armazenará o objeto do gráfico gerado com Chart.js.
-
+// ---------- DATA LOADING ---------- //
 async function carregarDados() {
-    const resposta = await fetch('/api/dados');
-    const dados = await resposta.json();
-    dadosGlobais = dados;
+    showChartLoading(); 
+    showYearChartLoading();
 
-    preencherSelects(dados);  // Preenche o select do gráfico
-    configurarIntervaloDatas(dados);  // define o intervalo de datas válidas.
-    atualizarGrafico(dados);  // Cria o gráfico inicial
-    atualizarTabela(dados);  // preenche a tabela inicial
+    try {
+        const resposta = await fetch('/api/dados/grafico');
+        const result = await resposta.json();
+        
+        // Handle both paginated and non-paginated responses
+        const dadosArray = result.data ? result.data : result;
+        
+        if (!Array.isArray(dadosArray)) {
+            throw new Error("Expected array but got: " + typeof dadosArray);
+        }
+        
+        dadosGlobais = dadosArray;
+        
+        // Initialize both charts and filters
+        if (document.getElementById('regiao')) {
+            preencherSelects(dadosGlobais);
+        }
+        
+        if (document.getElementById('grafico')) {
+            atualizarGrafico(dadosGlobais);
+        }
+        
+        if (document.getElementById('grafico-ano')) {
+            atualizarGraficoAno(dadosGlobais);
+        }
+        
+        if (document.getElementById('data-inicial')) {
+            configurarIntervaloDatas(dadosGlobais);
+        }
+    } catch (error) {
+        console.error("Error loading data:", error);
+        alert("Erro ao carregar dados. Por favor, recarregue a página.");
+    } finally {
+        hideChartLoading();
+        hideYearChartLoading();
+    }
 }
 
-// ---------- FIM INTEGRAçÃO E CRIAÇÃO ---------- //
+// ---------- LOADING STATES ---------- //
+function showChartLoading() {
+    const loader = document.getElementById('chart-loading');
+    if (loader) loader.classList.add('active');
+}
 
+function hideChartLoading() {
+    const loader = document.getElementById('chart-loading');
+    if (loader) {
+        loader.addEventListener('transitionend', () => {
+            loader.classList.remove('active');
+        }, { once: true });
+        loader.style.opacity = '0';
+    }
+}
 
-// ---------- GRÁFICO ---------- //
+function showYearChartLoading() {
+    const loader = document.getElementById('year-chart-loading');
+    if (loader) loader.classList.add('active');
+}
 
-function preencherSelects(dados) {  // Preenche o select do gráfico
+function hideYearChartLoading() {
+    const loader = document.getElementById('year-chart-loading');
+    if (loader) {
+        loader.addEventListener('transitionend', () => {
+            loader.classList.remove('active');
+        }, { once: true });
+        loader.style.opacity = '0';
+    }
+}
+
+// ---------- FILTER FUNCTIONS ---------- //
+function preencherSelects(dados) {
     const selectRegiao = document.getElementById('regiao');
-    const regioes = [...new Set(dados.map(d => d.REGIAO_GEOGRAFICA))];
-
     const selectSexo = document.getElementById('sexo');
-    const sexos = [...new Set(dados.map(d => d.SEXO))];
-
     const selectNatureza = document.getElementById('natureza');
+
+    // Clear existing options
+    selectRegiao.innerHTML = '<option value="">Todas</option>';
+    selectSexo.innerHTML = '<option value="">Todos</option>';
+    selectNatureza.innerHTML = '<option value="">Todas</option>';
+
+    // Get unique values
+    const regioes = [...new Set(dados.map(d => d.REGIAO_GEOGRAFICA))];
+    const sexos = [...new Set(dados.map(d => d.SEXO))];
     const naturezas = [...new Set(dados.map(d => d["NATUREZA JURIDICA"]))];
 
+    // Populate dropdowns
     regioes.forEach(regiao => {
-        const option = document.createElement('option');
-        option.value = regiao;
-        option.textContent = regiao;
-        selectRegiao.appendChild(option);
+        const option = new Option(regiao, regiao);
+        selectRegiao.add(option);
     });
 
     sexos.forEach(sexo => {
-        const option = document.createElement('option');
-        option.value = sexo;
-        option.textContent = sexo;
-        selectSexo.appendChild(option);
+        const option = new Option(sexo, sexo);
+        selectSexo.add(option);
     });
 
     naturezas.forEach(natureza => {
-        const option = document.createElement('option');
-        option.value = natureza;
-        option.textContent = natureza;
-        selectNatureza.appendChild(option);
+        const option = new Option(natureza, natureza);
+        selectNatureza.add(option);
     });
 }
 
-// ---------- FIM GRÁFICO ---------- //
-
-// ---------- DATAS ---------- //
-
-function parseDataBR(data) {
-    const [dia, mes, ano] = data.split('/');
-    return new Date(`${ano}-${mes}-${dia}`);
-}
-
-function configurarIntervaloDatas(dados) {
-    const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
-    const minData = new Date(Math.min(...datasConvertidas));
-    const maxData = new Date(Math.max(...datasConvertidas));
-
-    const minStr = minData.toISOString().split("T")[0];
-    const maxStr = maxData.toISOString().split("T")[0];
-
-    document.getElementById("data-inicial").min = minStr;
-    document.getElementById("data-inicial").max = maxStr;
-    document.getElementById("data-final").min = minStr;
-    document.getElementById("data-final").max = maxStr;
-}
-
-// ---------- FIM DATAS ---------- //
-
-// ---------- GRÁFICO ---------- //
-
-function filtrarDados() {  // filtra os dados do gráfico por região
+function filtrarDados() {
     const regiao = document.getElementById('regiao').value;
     const sexo = document.getElementById('sexo').value;
     const natureza = document.getElementById('natureza').value;
+    
     let filtrados = [...dadosGlobais];
-
-    if (regiao) {
-        filtrados = filtrados.filter(d => d.REGIAO_GEOGRAFICA === regiao);
-    }
-    if (sexo) {
-        filtrados = filtrados.filter(d => d.SEXO === sexo);
-    }
-    if (natureza) {
-        filtrados = filtrados.filter(d => d["NATUREZA JURIDICA"] === natureza);
-    }
-
+    
+    if (regiao) filtrados = filtrados.filter(d => d.REGIAO_GEOGRAFICA === regiao);
+    if (sexo) filtrados = filtrados.filter(d => d.SEXO === sexo);
+    if (natureza) filtrados = filtrados.filter(d => d["NATUREZA JURIDICA"] === natureza);
+    
+    // Update both charts
     atualizarGrafico(filtrados);
+    atualizarGraficoAno(filtrados);
 }
 
-function atualizarGrafico(dados) {  // Cria ou atualiza um gráfico de barras com os dados por região.
-    //Conta quantas ocorrências existem por região.
+// ---------- CHART FUNCTIONS ---------- //
+function atualizarGrafico(dados) {
+    // Count cases by region
     const contagem = {};
     dados.forEach(d => {
         const regiao = d.REGIAO_GEOGRAFICA;
         contagem[regiao] = (contagem[regiao] || 0) + 1;
     });
 
-    //Extrai os rótulos (regiões) e seus valores (contagens).
-    const labels = Object.keys(contagem);
-    const valores = Object.values(contagem);
-
     const ctx = document.getElementById('grafico').getContext('2d');
     if (grafico) grafico.destroy();
 
-    //Cria o gráfico de barras com os dados e opções de visualização.
     grafico = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: Object.keys(contagem),
             datasets: [{
                 label: 'Casos por Região',
-                data: valores,
+                data: Object.values(contagem),
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
@@ -136,83 +161,78 @@ function atualizarGrafico(dados) {  // Cria ou atualiza um gráfico de barras co
         }
     });
 }
-// ---------- FIM GRÁFICO ---------- //
 
-// ---------- TABELA ---------- //
-
-function atualizarTabela(dados) {  // Cria ou atualiza a tabela HTML com os dados.
-    const tbody = document.querySelector('#tabela tbody');
-    tbody.innerHTML = '';
-
-    dados.forEach(d => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
-<td>${d.MUNICIPIO}</td>
-<td>${d.REGIAO_GEOGRAFICA}</td>
-<td>${d.SEXO}</td>
-<td>${d['NATUREZA JURIDICA']}</td>
-<td>${d.DATA}</td>
-<td>${d.IDADE}</td>
-`;
-        tbody.appendChild(linha);
+function atualizarGraficoAno(dados) {
+    // Group data by year
+    const casosPorAno = {};
+    
+    dados.forEach(dado => {
+        if (!dado.DATA) return;
+        const ano = dado.DATA.split('/')[2]; // Extract year from DD/MM/YYYY
+        casosPorAno[ano] = (casosPorAno[ano] || 0) + 1;
     });
-}
-
-document.addEventListener('DOMContentLoaded', carregarDados);
-
-
-function filtrarTabela() {  // Função para filtrar tabela
-    //Seleciona todos os inputs de filtro e todas as linhas da tabela.
-    const filtros = document.querySelectorAll(".filtro");
-    const linhas = document.querySelectorAll("#tabela tbody tr");
-
-    //Captura os valores do filtro de data.
-    const dataInicial = document.getElementById("data-inicial").value;
-    const dataFinal = document.getElementById("data-final").value;
-
-    linhas.forEach(linha => {
-        let mostrar = true;
-
-        //Para cada filtro, pega: | A coluna que ele filtra (usando data-col); | O tipo de filtro (texto ou faixa-etária); | O valor do input do filtro; | O texto da célula correspondente da linha.
-        filtros.forEach(filtro => {
-            const col = parseInt(filtro.dataset.col);
-            const tipo = filtro.dataset.tipo || "texto";
-            const valorFiltro = filtro.value.toLowerCase();
-            const celulaTexto = linha.children[col].textContent.toLowerCase();
-
-            //Aplica o filtro | Verifica se o conteúdo da célula inclui o valor do filtro.
-            if (valorFiltro) {
-                if (tipo === "faixa-etaria") {
-                    const idade = parseInt(celulaTexto);
-                    const [min, max] = valorFiltro.split("-").map(Number);
-                    if (isNaN(idade) || idade < min || idade > max) {
-                        mostrar = false;
-                    }
-                } else {
-                    if (!celulaTexto.includes(valorFiltro)) {
-                        mostrar = false;
-                    }
+    
+    // Sort years chronologically
+    const anos = Object.keys(casosPorAno).sort();
+    const contagens = anos.map(ano => casosPorAno[ano]);
+    
+    const ctx = document.getElementById('grafico-ano').getContext('2d');
+    if (graficoAno) graficoAno.destroy();
+    
+    graficoAno = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Casos por Ano',
+                data: contagens,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 2,
+                tension: 0.1,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Número de Casos' }
+                },
+                x: {
+                    title: { display: true, text: 'Ano' }
                 }
             }
-        });
-
-        // Filtra por intervalo de datas, convertendo a data da linha para Date e comparando com os valores do input.
-        if (dataInicial || dataFinal) {
-            const textoData = linha.children[4].textContent; // formato dd/mm/yyyy
-            const [dia, mes, ano] = textoData.split('/');
-            const dataLinha = new Date(`${ano}-${mes}-${dia}`);
-
-            if (dataInicial && dataLinha < new Date(dataInicial)) {
-                mostrar = false;
-            }
-            if (dataFinal && dataLinha > new Date(dataFinal)) {
-                mostrar = false;
-            }
         }
-
-        //Exibe a linha se ela passou em todos os filtros, ou esconde se não passou.
-        linha.style.display = mostrar ? "" : "none";
     });
 }
 
-// ---------- FIM TABELA ---------- //
+// ---------- DATE FUNCTIONS ---------- //
+function parseDataBR(data) {
+    if (!data) return new Date();
+    const [dia, mes, ano] = data.split('/');
+    return new Date(`${ano}-${mes}-${dia}`);
+}
+
+function configurarIntervaloDatas(dados) {
+    if (!dados.length) return;
+    
+    const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
+    const minData = new Date(Math.min(...datasConvertidas));
+    const maxData = new Date(Math.max(...datasConvertidas));
+
+    const minStr = minData.toISOString().split("T")[0];
+    const maxStr = maxData.toISOString().split("T")[0];
+
+    const dataInicialEl = document.getElementById("data-inicial");
+    const dataFinalEl = document.getElementById("data-final");
+    
+    if (dataInicialEl) dataInicialEl.min = minStr;
+    if (dataInicialEl) dataInicialEl.max = maxStr;
+    if (dataFinalEl) dataFinalEl.min = minStr;
+    if (dataFinalEl) dataFinalEl.max = maxStr;
+}
+
+// ---------- INITIALIZATION ---------- //
+document.addEventListener('DOMContentLoaded', carregarDados);
