@@ -43,7 +43,7 @@ def tabela():
 def dados():
     # Pagination parameters
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 120, type=int)
+    per_page = request.args.get('per_page', 300, type=int)
     
     # Filter parameters
     regiao = request.args.get('regiao')

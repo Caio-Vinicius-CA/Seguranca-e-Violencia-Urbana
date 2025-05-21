@@ -9,7 +9,7 @@ let dadosGlobais = [];
 let currentPage = 1;
 
 // Número de ítens por página
-const perPage = 120;
+const perPage = 300;
 
 // ======================
 // CARREGAMENTO DE DADOS
