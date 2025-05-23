@@ -13,10 +13,10 @@
   </head>
   <body>
     <header class="header">
-      <div class="container">
+      <div class="container-header">
         <h1>Monitor de Violência Urbana</h1>
         <nav class="nav">
-          <a href="/">Dashboard</a>
+          <a href="/">Dashboards</a>
           <a href="/tabela">Dados Completos</a>
         </nav>
       </div>
@@ -46,6 +46,22 @@
             <label for="natureza">Natureza do Crime:</label>
             <select id="natureza" onchange="filtrarDados()">
               <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="idade">Idade:</label>
+            <select id="idade" class="chart-filter" data-tipo="faixa-etaria">
+              <option value="">Todas</option>
+              <option value="1-17">1-17</option>
+              <option value="18-29">18-29</option>
+              <option value="30-39">30-39</option>
+              <option value="40-49">40-49</option>
+              <option value="50-59">50-59</option>
+              <option value="60-69">60-69</option>
+              <option value="70-79">70-79</option>
+              <option value="80-89">80-89</option>
+              <option value="90-150">90+</option>
             </select>
           </div>
         </div>
@@ -82,6 +98,21 @@
             <label for="natureza2">Natureza do Crime:</label>
             <select id="natureza2" onchange="filtrarDados()">
               <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="idade2">Idade:</label>
+            <select id="idade2" class="chart-filter" data-tipo="faixa-etaria">
+              <option value="">Todas</option>
+              <option value="1-17">1-17</option>
+              <option value="18-29">18-29</option>
+              <option value="30-39">30-39</option>
+              <option value="40-49">40-49</option>
+              <option value="50-59">50-59</option>
+              <option value="60-69">60-69</option>
+              <option value="70-79">70-79</option>
+              <option value="80-89">80-89</option>
+              <option value="90-150">90+</option>
             </select>
           </div>
         </div>

@@ -5,35 +5,35 @@ let graficoAno = null;  // Yearly chart instance
 
 // ---------- DATA LOADING ---------- //
 async function carregarDados() {
-    showChartLoading(); 
+    showChartLoading();
     showYearChartLoading();
 
     try {
         const resposta = await fetch('/api/dados/grafico');
         const result = await resposta.json();
-        
+
         // Handle both paginated and non-paginated responses
         const dadosArray = result.data ? result.data : result;
-        
+
         if (!Array.isArray(dadosArray)) {
             throw new Error("Expected array but got: " + typeof dadosArray);
         }
-        
+
         dadosGlobais = dadosArray;
-        
+
         // Initialize both charts and filters
         if (document.getElementById('regiao')) {
             preencherSelects(dadosGlobais);
         }
-        
+
         if (document.getElementById('grafico')) {
             atualizarGrafico(dadosGlobais);
         }
-        
+
         if (document.getElementById('grafico-ano')) {
             atualizarGraficoAno(dadosGlobais);
         }
-        
+
         if (document.getElementById('data-inicial')) {
             configurarIntervaloDatas(dadosGlobais);
         }
@@ -79,51 +79,94 @@ function hideYearChartLoading() {
 
 // ---------- FILTER FUNCTIONS ---------- //
 function preencherSelects(dados) {
-    const selectRegiao = document.getElementById('regiao');
-    const selectSexo = document.getElementById('sexo');
-    const selectNatureza = document.getElementById('natureza');
-
-    // Clear existing options
-    selectRegiao.innerHTML = '<option value="">Todas</option>';
-    selectSexo.innerHTML = '<option value="">Todos</option>';
-    selectNatureza.innerHTML = '<option value="">Todas</option>';
-
-    // Get unique values
+    // Get unique values from data
     const regioes = [...new Set(dados.map(d => d.REGIAO_GEOGRAFICA))];
     const sexos = [...new Set(dados.map(d => d.SEXO))];
     const naturezas = [...new Set(dados.map(d => d["NATUREZA JURIDICA"]))];
 
-    // Populate dropdowns
-    regioes.forEach(regiao => {
-        const option = new Option(regiao, regiao);
-        selectRegiao.add(option);
-    });
-
-    sexos.forEach(sexo => {
-        const option = new Option(sexo, sexo);
-        selectSexo.add(option);
-    });
-
-    naturezas.forEach(natureza => {
-        const option = new Option(natureza, natureza);
-        selectNatureza.add(option);
-    });
+    // Fill selects for both charts
+    fillSelect('regiao', regioes);
+    fillSelect('regiao2', regioes);
+    fillSelect('sexo', sexos);
+    fillSelect('sexo2', sexos);
+    fillSelect('natureza', naturezas);
+    fillSelect('natureza2', naturezas);
 }
 
+// Helper function to fill a select element
+function fillSelect(id, options) {
+    const select = document.getElementById(id);
+    if (!select) return;
+
+    // Keep existing selected value
+    const currentValue = select.value;
+
+    // Clear existing options (except first)
+    while (select.options.length > 1) {
+        select.remove(1);
+    }
+
+    // Add new options
+    options.forEach(option => {
+        if (option) { // Skip null/undefined
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            select.appendChild(opt);
+        }
+    });
+
+    // Restore selection if still valid
+    if (options.includes(currentValue)) {
+        select.value = currentValue;
+    }
+}
+
+// ---------- FILTER FUNCTIONS ---------- //
 function filtrarDados() {
-    const regiao = document.getElementById('regiao').value;
-    const sexo = document.getElementById('sexo').value;
-    const natureza = document.getElementById('natureza').value;
-    
-    let filtrados = [...dadosGlobais];
-    
+    // Get filter values from both charts
+    const filters = {
+        chart1: getFilters('regiao', 'sexo', 'natureza', 'idade'),
+        chart2: getFilters('regiao2', 'sexo2', 'natureza2', 'idade2')
+    };
+
+    // Apply filters to each chart's data
+    const filtrados1 = aplicarFiltros(dadosGlobais, filters.chart1);
+    const filtrados2 = aplicarFiltros(dadosGlobais, filters.chart2);
+
+    // Update charts
+    atualizarGrafico(filtrados1);
+    atualizarGraficoAno(filtrados2);
+}
+
+// Helper to get filter values
+function getFilters(regiaoId, sexoId, naturezaId, idadeId) {
+    return {
+        regiao: document.getElementById(regiaoId).value,
+        sexo: document.getElementById(sexoId).value,
+        natureza: document.getElementById(naturezaId).value,
+        idade: document.getElementById(idadeId).value
+    };
+}
+
+// Helper to apply filters to data
+function aplicarFiltros(dados, { regiao, sexo, natureza, idade }) {
+    let filtrados = [...dados];
+
     if (regiao) filtrados = filtrados.filter(d => d.REGIAO_GEOGRAFICA === regiao);
     if (sexo) filtrados = filtrados.filter(d => d.SEXO === sexo);
     if (natureza) filtrados = filtrados.filter(d => d["NATUREZA JURIDICA"] === natureza);
-    
-    // Update both charts
-    atualizarGrafico(filtrados);
-    atualizarGraficoAno(filtrados);
+
+    if (idade) {
+        const [min, max] = idade.split('-').map(Number);
+        filtrados = filtrados.filter(d => {
+            const idadeNum = parseInt(d.IDADE);
+            return !isNaN(idadeNum) && idadeNum >= min && idadeNum <= max;
+        });
+    }
+
+
+    return filtrados;
 }
 
 // ---------- CHART FUNCTIONS ---------- //
@@ -165,20 +208,20 @@ function atualizarGrafico(dados) {
 function atualizarGraficoAno(dados) {
     // Group data by year
     const casosPorAno = {};
-    
+
     dados.forEach(dado => {
         if (!dado.DATA) return;
         const ano = dado.DATA.split('/')[2]; // Extract year from DD/MM/YYYY
         casosPorAno[ano] = (casosPorAno[ano] || 0) + 1;
     });
-    
+
     // Sort years chronologically
     const anos = Object.keys(casosPorAno).sort();
     const contagens = anos.map(ano => casosPorAno[ano]);
-    
+
     const ctx = document.getElementById('grafico-ano').getContext('2d');
     if (graficoAno) graficoAno.destroy();
-    
+
     graficoAno = new Chart(ctx, {
         type: 'line',
         data: {
@@ -217,7 +260,7 @@ function parseDataBR(data) {
 
 function configurarIntervaloDatas(dados) {
     if (!dados.length) return;
-    
+
     const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
     const minData = new Date(Math.min(...datasConvertidas));
     const maxData = new Date(Math.max(...datasConvertidas));
@@ -227,7 +270,7 @@ function configurarIntervaloDatas(dados) {
 
     const dataInicialEl = document.getElementById("data-inicial");
     const dataFinalEl = document.getElementById("data-final");
-    
+
     if (dataInicialEl) dataInicialEl.min = minStr;
     if (dataInicialEl) dataInicialEl.max = maxStr;
     if (dataFinalEl) dataFinalEl.min = minStr;
@@ -235,4 +278,12 @@ function configurarIntervaloDatas(dados) {
 }
 
 // ---------- INITIALIZATION ---------- //
-document.addEventListener('DOMContentLoaded', carregarDados);
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize both charts
+    carregarDados();
+
+    // Add filter event listeners to all filter controls
+    document.querySelectorAll('.filtro, .chart-filter').forEach(filter => {
+        filter.addEventListener('change', filtrarDados);
+    });
+});
