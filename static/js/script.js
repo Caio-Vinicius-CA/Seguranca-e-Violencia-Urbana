@@ -1,6 +1,5 @@
 // ---------- GLOBAL VARIABLES ---------- //
 let dadosGlobais = [];  // Armazena todos os dados carregados
-declared
 let grafico = null;     // Instância principal do gráfico (por região)
 let graficoAno = null;  // Instância do gráfico de casos por ano
 
