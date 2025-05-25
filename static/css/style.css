@@ -1,4 +1,4 @@
-/* ===== BASE STYLES ===== */
+/* ===== ESTILOS BÁSICOS ===== */
 /* Definição de variáveis CSS para reutilização de cores e efeitos */
 :root {
     --primary-dark: #8B0000;        /* Vermelho escuro - destaca urgência ou importância */
@@ -30,7 +30,7 @@ body {
     line-height: 1.6;
 }
 
-/* ===== TYPOGRAPHY ===== */
+/* ===== TIPOGRAFIA ===== */
 /* Títulos com destaque em vermelho escuro */
 h1,
 h2,
@@ -59,7 +59,7 @@ h2 {
     padding: 1rem;
 }
 
-/* ===== NAVIGATION & HEADER ===== */
+/* ===== HEADER E NAVEGAÇÃO ===== */
 /* Cabeçalho com fundo vermelho escuro e sombra */
 .header {
     background-color: var(--primary-dark);
@@ -124,7 +124,7 @@ h2 {
     outline-offset: 2px;
 }
 
-/* ===== CHART CONTAINERS ===== */
+/* ===== CONTAINERS DOS GRÁFICOS ===== */
 /* Seção de gráficos com cartão branco e sombra */
 .chart-section {
     background: white;
@@ -142,7 +142,7 @@ h2 {
     margin-top: 1rem;
 }
 
-/* ===== FILTER CONTROLS ===== */
+/* ===== CONTROLES DOS FILTROS ===== */
 /* Bloco de filtros com layout responsivo */
 .filters {
     display: flex;
@@ -184,7 +184,7 @@ h2 {
     box-shadow: 0 0 0 2px rgba(192, 0, 0, 0.2);
 }
 
-/* ===== LOADING STATES ===== */
+/* ===== LOADINGS ===== */
 /* Tela de carregamento do gráfico */
 .chart-loading {
     position: absolute;
@@ -218,7 +218,6 @@ h2 {
     animation: spin 1s linear infinite;
     margin-right: 12px;
 }
-
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -251,7 +250,7 @@ h2 {
     position: relative;
 }
 
-/* ===== DATA TABLE ===== */
+/* ===== TABELA DE DADOS ===== */
 /* Estilo do container da tabela com rolagem */
 .table-container {
     display: block;
@@ -313,7 +312,7 @@ table#tabela td:nth-child(6) {
     text-align: center;
 }
 
-/* ===== PAGINATION ===== */
+/* ===== PAGINAÇÃO ===== */
 /* Controles de paginação */
 #pagination {
     display: flex;
@@ -344,7 +343,7 @@ table#tabela td:nth-child(6) {
     font-weight: bold;
 }
 
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
+/* ===== AJUSTES DE RESPONSIVIDADE ===== */
 /* Adaptações para telas pequenas */
 @media (max-width: 768px) {
     .filters {

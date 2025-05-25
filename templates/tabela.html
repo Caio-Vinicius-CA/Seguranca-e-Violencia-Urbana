@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html lang="pt-BR"> <!-- Define o idioma da página como português do Brasil -->
+<html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" /> <!-- Define o conjunto de caracteres como UTF-8 -->
-    <title>Violência Urbana</title> <!-- Título da aba do navegador -->
+    <meta charset="UTF-8" />
+    <!-- Define o conjunto de caracteres como UTF-8 -->
 
-    <!-- Importa o CSS personalizado armazenado na pasta static/css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <!-- Define a escala inicial para dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Violência Urbana</title>
+
+    <!-- Importa o CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
 
     <!-- Biblioteca Chart.js para criação de gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,8 +22,14 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <!-- Estilos do DataTables para a tabela -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css"
+    />
 
     <!-- Scripts JavaScript do DataTables e do recurso de rolagem -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -35,7 +49,7 @@
     </header>
 
     <main class="container">
-      <h1 class="heading">Tabela de Dados</h1> <!-- Título principal da seção -->
+      <h1 class="heading">Tabela de Dados</h1>
 
       <div class="table-container">
         <!-- Overlay de carregamento exibido enquanto os dados são carregados -->
@@ -67,7 +81,9 @@
                   <option value="">Todos</option>
                   <option value="Agreste">Agreste</option>
                   <option value="Capital">Capital</option>
-                  <option value="Região Metropolitana">Região Metropolitana</option>
+                  <option value="Região Metropolitana">
+                    Região Metropolitana
+                  </option>
                   <option value="Sertão">Sertão</option>
                   <option value="Zona da Mata">Zona da Mata</option>
                 </select>
@@ -92,7 +108,9 @@
                   <option value="Homicidio">Homicidio</option>
                   <option value="Feminicidio">Feminicidio</option>
                   <option value="Latrocinio">Latrocinio</option>
-                  <option value="Lesões corporais seguida de morte">Lesões corporais seguida de morte</option>
+                  <option value="Lesões corporais seguida de morte">
+                    Lesões corporais seguida de morte
+                  </option>
                 </select>
               </th>
 

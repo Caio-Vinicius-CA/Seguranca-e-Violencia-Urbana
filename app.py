@@ -1,6 +1,6 @@
-# Importações necessárias do Flask, SQLAlchemy e outras bibliotecas
-from flask import Flask, render_template, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
+# Imports necessárias do Flask, SQLAlchemy e outras bibliotecas
+from flask import Flask, render_template, jsonify, request # Para renderizar templates e manipular requisições
+from flask_sqlalchemy import SQLAlchemy # Para interagir com o banco de dados
 from sqlalchemy import func, and_  # Para funções SQL e múltiplas condições
 from datetime import datetime  # Para manipular datas
 import os  # Para acessar variáveis de ambiente
@@ -99,11 +99,6 @@ def dados():
     
     # Executa a query com paginação
     paginated_data = query.paginate(page=page, per_page=per_page, error_out=False)
-
-    # Apenas para depuração (pode remover em produção)
-    print(paginated_data.total)
-    print(paginated_data.pages)
-    print(paginated_data.page)
     
     # Retorna os dados em formato JSON
     return jsonify({

@@ -1,9 +1,9 @@
-// ---------- GLOBAL VARIABLES ---------- //
+// ---------- VARIÁVEIS GLOBAIS ---------- //
 let dadosGlobais = [];  // Armazena todos os dados carregados
 let grafico = null;     // Instância principal do gráfico (por região)
 let graficoAno = null;  // Instância do gráfico de casos por ano
 
-// ---------- DATA LOADING ---------- //
+// ---------- CARREGAMENTO DOS DADOS ---------- //
 async function carregarDados() {
     showChartLoading();            // Mostra indicador de carregamento do gráfico principal
     showYearChartLoading();        // Mostra indicador de carregamento do gráfico por ano
@@ -46,7 +46,7 @@ async function carregarDados() {
     }
 }
 
-// ---------- LOADING STATES ---------- //
+// ---------- LOADINGS ---------- //
 function showChartLoading() {
     const loader = document.getElementById('chart-loading'); // Elemento do loader
     if (loader) loader.classList.add('active'); // Ativa classe de carregamento
@@ -77,7 +77,7 @@ function hideYearChartLoading() {
     }
 }
 
-// ---------- FILTER FUNCTIONS ---------- //
+// ---------- PREENCHER SELECTS ---------- //
 function preencherSelects(dados) {
     // Extrai valores únicos para cada filtro
     const regioes = [...new Set(dados.map(d => d.REGIAO_GEOGRAFICA))];
@@ -121,7 +121,7 @@ function fillSelect(id, options) {
     }
 }
 
-// ---------- FILTER FUNCTIONS ---------- //
+// ---------- FUNÇÕES DOS FILTROS ---------- //
 function filtrarDados() {
     // Coleta filtros de ambos os conjuntos
     const filters = {
@@ -168,7 +168,7 @@ function aplicarFiltros(dados, { regiao, sexo, natureza, idade }) {
     return filtrados;
 }
 
-// ---------- CHART FUNCTIONS ---------- //
+// ---------- FUNÇÕES DOS GRÁFICOS ---------- //
 function atualizarGrafico(dados) {
     // Conta ocorrências por região
     const contagem = {};
@@ -249,7 +249,7 @@ function atualizarGraficoAno(dados) {
     });
 }
 
-// ---------- DATE FUNCTIONS ---------- //
+// ---------- FUNÇÕES DAS DATAS ---------- //
 function parseDataBR(data) {
     if (!data) return new Date();
     const [dia, mes, ano] = data.split('/'); // Separa DD/MM/AAAA
@@ -275,7 +275,7 @@ function configurarIntervaloDatas(dados) {
     if (dataFinalEl) dataFinalEl.max = maxStr;
 }
 
-// ---------- INITIALIZATION ---------- //
+// ---------- INICIALIZAÇÃO ---------- //
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados(); // Carrega os dados ao iniciar
 
