@@ -8,7 +8,7 @@ let dadosGlobais = [];
 // Página atual da paginação (padrão: 1)
 let currentPage = 1;
 
-// Número de ítens por página
+// Número de itens por página
 const perPage = 300;
 
 // ======================
@@ -16,42 +16,43 @@ const perPage = 300;
 // ======================
 
 /**
- * Loads paginated data from API and updates table
- * @param {number} page - Page number to load (default: 1)
+ * Carrega dados paginados da API e atualiza a tabela
+ * @param {number} page - Número da página a ser carregada (padrão: 1)
  */
 async function carregarDados(page = 1) {
     try {
-        showTableLoading(); // Animação de loading
-        // 1. Fetch data from API with pagination parameters
+        showTableLoading(); // Exibe o indicador de carregamento
+
+        // Requisição para a API com parâmetros de paginação
         const resposta = await fetch(`/api/dados?page=${page}&per_page=${perPage}`);
         if (!resposta.ok) throw new Error('Network response was not ok');
 
-        // 2. Parse JSON response
+        // Conversão da resposta em JSON
         const dados = await resposta.json();
+        console.log('API Response:', dados);
 
-        console.log('API Response:', dados)
-
-        // 3. Lida com os dados paginados e não paginados
+        // Armazena os dados no array global
         dadosGlobais = dados.data ? dados.data : [];
         currentPage = page;
 
-        // 4. Atualiza tabela com novos dados
+        // Atualiza a tabela com os dados carregados
         atualizarTabela(dadosGlobais);
 
-        // 5. Configura filtro de data
+        // Configura o intervalo de datas, se os campos existirem
         if (document.getElementById("data-inicial")) {
             configurarIntervaloDatas(dadosGlobais);
         }
 
-        // 6. Atualiza paginação
+        // Atualiza os controles de paginação
         updatePagination(dados.total, dados.pages, currentPage);
 
     } catch (error) {
+        // Exibe mensagem de erro em caso de falha
         console.error("Error loading data:", error);
         document.getElementById('pagination').innerHTML =
             '<span style="color: red;">Erro ao carregar dados. Recarregue a página.</span>';
     } finally {
-        hideTableLoading()
+        hideTableLoading(); // Esconde o indicador de carregamento
     }
 }
 
@@ -59,6 +60,9 @@ async function carregarDados(page = 1) {
 // FUNÇÕES DE LOADING
 // ======================
 
+/**
+ * Exibe o elemento de carregamento da tabela
+ */
 function showTableLoading() {
     const loadingElement = document.getElementById('table-loading');
     if (loadingElement) {
@@ -66,6 +70,9 @@ function showTableLoading() {
     }
 }
 
+/**
+ * Oculta o elemento de carregamento da tabela
+ */
 function hideTableLoading() {
     const loadingElement = document.getElementById('table-loading');
     if (loadingElement) {
@@ -78,45 +85,39 @@ function hideTableLoading() {
 // ======================
 
 /**
- * Parses Brazilian format date (DD/MM/YYYY) to Date object
- * @param {string} data - Date string in DD/MM/YYYY format
- * @returns {Date} Parsed date or current date if invalid
+ * Converte data no formato brasileiro (DD/MM/AAAA) para objeto Date
+ * @param {string} data - Data em formato DD/MM/AAAA
+ * @returns {Date} Objeto Date correspondente
  */
 function parseDataBR(data) {
-    if (!data) return new Date(); // Fallback to current date
+    if (!data) return new Date();
 
     try {
         const [dia, mes, ano] = data.split('/');
         return new Date(`${ano}-${mes}-${dia}`);
     } catch (e) {
         console.warn("Failed to parse date:", data);
-        return new Date(); // Fallback to current date
+        return new Date();
     }
 }
 
 /**
- * Configures valid date range for date inputs
- * @param {Array} dados - Array of data items containing DATE fields
+ * Configura os valores mínimos e máximos para inputs de data
+ * @param {Array} dados - Array de objetos com campo DATA
  */
 function configurarIntervaloDatas(dados) {
-    // Validar dados de entrada
     if (!dados || !Array.isArray(dados) || dados.length === 0) {
         console.warn("No valid data provided to configurarIntervaloDatas");
         return;
     }
 
-    // 1. Convert all dates to Date objects
     const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
-
-    // 2. Find min and max dates
     const minData = new Date(Math.min(...datasConvertidas));
     const maxData = new Date(Math.max(...datasConvertidas));
 
-    // 3. Format as YYYY-MM-DD for input elements
     const minStr = minData.toISOString().split("T")[0];
     const maxStr = maxData.toISOString().split("T")[0];
 
-    // 4. Update date input constraints
     const dataInicialEl = document.getElementById("data-inicial");
     const dataFinalEl = document.getElementById("data-final");
 
@@ -135,17 +136,16 @@ function configurarIntervaloDatas(dados) {
 // ======================
 
 /**
- * Updates table with new data
- * @param {Array} dados - Array of data items to display
+ * Atualiza a tabela com os dados fornecidos
+ * @param {Array} dados - Lista de objetos a serem exibidos na tabela
  */
 function atualizarTabela(dados) {
     const tbody = document.querySelector('#tabela tbody');
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = ''; // Limpa a tabela
 
-    // Create and append new rows for each data item
+    // Cria uma linha para cada item de dados
     dados.forEach(d => {
         const linha = document.createElement('tr');
-        // Using template literal for row HTML
         linha.innerHTML = `
 <td>${d.MUNICIPIO}</td>
 <td>${d.REGIAO_GEOGRAFICA}</td>
@@ -159,10 +159,10 @@ function atualizarTabela(dados) {
 }
 
 /**
- * Updates pagination controls
- * @param {number} totalItems - Total items in dataset
- * @param {number} totalPages - Total pages available
- * @param {number} currentPage - Current active page
+ * Atualiza os botões de navegação de páginas
+ * @param {number} totalItems - Total de itens no conjunto de dados
+ * @param {number} totalPages - Número total de páginas disponíveis
+ * @param {number} currentPage - Página atualmente ativa
  */
 function updatePagination(totalItems, totalPages, currentPage) {
     console.log('Updating pagination:', { totalItems, totalPages, currentPage });
@@ -176,19 +176,17 @@ function updatePagination(totalItems, totalPages, currentPage) {
 
     if (totalPages <= 1) return;
 
-    // Create Previous button
+    // Botão "Anterior"
     const prevBtn = document.createElement('button');
     prevBtn.textContent = '« Anterior';
     prevBtn.disabled = currentPage === 1;
     prevBtn.addEventListener('click', () => carregarDados(currentPage - 1));
     paginationDiv.appendChild(prevBtn);
 
-    // Create page number buttons
+    // Botões de página
     const maxVisible = 18;
     let start = Math.max(1, currentPage - 2);
     let end = Math.min(totalPages, start + maxVisible - 1);
-
-    // Adjust if we're at the end
     if (end - start + 1 < maxVisible) {
         start = Math.max(1, end - maxVisible + 1);
     }
@@ -204,18 +202,18 @@ function updatePagination(totalItems, totalPages, currentPage) {
         paginationDiv.appendChild(btn);
     }
 
-    // Create Next button
+    // Botão "Próxima"
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Próxima »';
     nextBtn.disabled = currentPage >= totalPages;
     nextBtn.addEventListener('click', () => carregarDados(currentPage + 1));
     paginationDiv.appendChild(nextBtn);
 
-    // Add CSS classes (they should be in your style.css)
+    // Adiciona classe para estilo
     paginationDiv.classList.add('pagination-container');
 }
 
-// Initialize table when DOM is loaded
+// Inicializa os dados assim que o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await carregarDados();
@@ -228,23 +226,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 // FILTRAGEM
 // ======================
 
+/**
+ * Aplica filtros aos dados da tabela com base nos inputs do usuário
+ */
 function filtrarTabela() {
+    showTableLoading();
 
-    showTableLoading()
-
-    // 1. Get all filter inputs and table rows
     const filtros = document.querySelectorAll(".filtro");
     const linhas = document.querySelectorAll("#tabela tbody tr");
 
-    // 2. Get date filter values
+    // Obtém as datas do filtro
     const dataInicial = document.getElementById("data-inicial").value;
     const dataFinal = document.getElementById("data-final").value;
 
-    // 3. Process each row
     linhas.forEach(linha => {
-        let mostrar = true; // Flag to determine row visibility
+        let mostrar = true; // Flag de visibilidade da linha
 
-        // 4. Apply column filters
+        // Aplica filtros de colunas
         filtros.forEach(filtro => {
             const col = parseInt(filtro.dataset.col);
             const tipo = filtro.dataset.tipo || "texto";
@@ -253,14 +251,14 @@ function filtrarTabela() {
 
             if (valorFiltro) {
                 if (tipo === "faixa-etaria") {
-                    // Handle age range filtering
+                    // Filtro por faixa etária
                     const idade = parseInt(celulaTexto);
                     const [min, max] = valorFiltro.split("-").map(Number);
                     if (isNaN(idade) || idade < min || idade > max) {
                         mostrar = false;
                     }
                 } else {
-                    // Handle text filtering
+                    // Filtro textual
                     if (!celulaTexto.includes(valorFiltro)) {
                         mostrar = false;
                     }
@@ -268,13 +266,12 @@ function filtrarTabela() {
             }
         });
 
-        // 5. Apply date range filtering
+        // Aplica filtro por intervalo de datas
         if (dataInicial || dataFinal) {
             const textoData = linha.children[4].textContent;
             const [dia, mes, ano] = textoData.split('/');
             const dataLinha = new Date(`${ano}-${mes}-${dia}`);
 
-            // Check if date is outside range
             if (dataInicial && dataLinha < new Date(dataInicial)) {
                 mostrar = false;
             }
@@ -283,7 +280,7 @@ function filtrarTabela() {
             }
         }
 
-        // 6. Update row visibility
+        // Exibe ou oculta a linha com base nos filtros
         linha.style.display = mostrar ? "" : "none";
         setTimeout(hideTableLoading, 0);
     });

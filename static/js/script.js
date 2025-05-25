@@ -1,90 +1,91 @@
 // ---------- GLOBAL VARIABLES ---------- //
-let dadosGlobais = [];  // Stores all loaded data
-let grafico = null;     // Main chart instance (by region)
-let graficoAno = null;  // Yearly chart instance
+let dadosGlobais = [];  // Armazena todos os dados carregados
+declared
+let grafico = null;     // Instância principal do gráfico (por região)
+let graficoAno = null;  // Instância do gráfico de casos por ano
 
 // ---------- DATA LOADING ---------- //
 async function carregarDados() {
-    showChartLoading();
-    showYearChartLoading();
+    showChartLoading();            // Mostra indicador de carregamento do gráfico principal
+    showYearChartLoading();        // Mostra indicador de carregamento do gráfico por ano
 
     try {
-        const resposta = await fetch('/api/dados/grafico');
-        const result = await resposta.json();
+        const resposta = await fetch('/api/dados/grafico'); // Faz requisição à API
+        const result = await resposta.json();               // Converte resposta em JSON
 
-        // Handle both paginated and non-paginated responses
+        // Lida com resposta paginada ou não
         const dadosArray = result.data ? result.data : result;
 
         if (!Array.isArray(dadosArray)) {
-            throw new Error("Expected array but got: " + typeof dadosArray);
+            throw new Error("Expected array but got: " + typeof dadosArray); // Verifica se é um array
         }
 
-        dadosGlobais = dadosArray;
+        dadosGlobais = dadosArray;  // Armazena dados globalmente
 
-        // Initialize both charts and filters
+        // Inicializa gráficos e filtros conforme a presença dos elementos
         if (document.getElementById('regiao')) {
-            preencherSelects(dadosGlobais);
+            preencherSelects(dadosGlobais); // Preenche os filtros de seleção
         }
 
         if (document.getElementById('grafico')) {
-            atualizarGrafico(dadosGlobais);
+            atualizarGrafico(dadosGlobais); // Cria gráfico principal
         }
 
         if (document.getElementById('grafico-ano')) {
-            atualizarGraficoAno(dadosGlobais);
+            atualizarGraficoAno(dadosGlobais); // Cria gráfico por ano
         }
 
         if (document.getElementById('data-inicial')) {
-            configurarIntervaloDatas(dadosGlobais);
+            configurarIntervaloDatas(dadosGlobais); // Define intervalo de datas nos inputs
         }
     } catch (error) {
-        console.error("Error loading data:", error);
-        alert("Erro ao carregar dados. Por favor, recarregue a página.");
+        console.error("Error loading data:", error); // Exibe erro no console
+        alert("Erro ao carregar dados. Por favor, recarregue a página."); // Alerta usuário
     } finally {
-        hideChartLoading();
-        hideYearChartLoading();
+        hideChartLoading();     // Esconde indicador de carregamento do gráfico principal
+        hideYearChartLoading(); // Esconde indicador de carregamento do gráfico por ano
     }
 }
 
 // ---------- LOADING STATES ---------- //
 function showChartLoading() {
-    const loader = document.getElementById('chart-loading');
-    if (loader) loader.classList.add('active');
+    const loader = document.getElementById('chart-loading'); // Elemento do loader
+    if (loader) loader.classList.add('active'); // Ativa classe de carregamento
 }
 
 function hideChartLoading() {
     const loader = document.getElementById('chart-loading');
     if (loader) {
         loader.addEventListener('transitionend', () => {
-            loader.classList.remove('active');
+            loader.classList.remove('active'); // Remove classe após transição
         }, { once: true });
-        loader.style.opacity = '0';
+        loader.style.opacity = '0'; // Inicia fade-out
     }
 }
 
 function showYearChartLoading() {
     const loader = document.getElementById('year-chart-loading');
-    if (loader) loader.classList.add('active');
+    if (loader) loader.classList.add('active'); // Ativa classe de carregamento do gráfico por ano
 }
 
 function hideYearChartLoading() {
     const loader = document.getElementById('year-chart-loading');
     if (loader) {
         loader.addEventListener('transitionend', () => {
-            loader.classList.remove('active');
+            loader.classList.remove('active'); // Remove classe após transição
         }, { once: true });
-        loader.style.opacity = '0';
+        loader.style.opacity = '0'; // Inicia fade-out
     }
 }
 
 // ---------- FILTER FUNCTIONS ---------- //
 function preencherSelects(dados) {
-    // Get unique values from data
+    // Extrai valores únicos para cada filtro
     const regioes = [...new Set(dados.map(d => d.REGIAO_GEOGRAFICA))];
     const sexos = [...new Set(dados.map(d => d.SEXO))];
     const naturezas = [...new Set(dados.map(d => d["NATUREZA JURIDICA"]))];
 
-    // Fill selects for both charts
+    // Preenche os selects dos dois gráficos
     fillSelect('regiao', regioes);
     fillSelect('regiao2', regioes);
     fillSelect('sexo', sexos);
@@ -93,22 +94,21 @@ function preencherSelects(dados) {
     fillSelect('natureza2', naturezas);
 }
 
-// Helper function to fill a select element
+// Função auxiliar para preencher um select
 function fillSelect(id, options) {
-    const select = document.getElementById(id);
+    const select = document.getElementById(id); // Referência ao select
     if (!select) return;
 
-    // Keep existing selected value
-    const currentValue = select.value;
+    const currentValue = select.value; // Armazena valor atual selecionado
 
-    // Clear existing options (except first)
+    // Remove todas opções, exceto a primeira
     while (select.options.length > 1) {
         select.remove(1);
     }
 
-    // Add new options
+    // Adiciona novas opções
     options.forEach(option => {
-        if (option) { // Skip null/undefined
+        if (option) {
             const opt = document.createElement('option');
             opt.value = option;
             opt.textContent = option;
@@ -116,7 +116,7 @@ function fillSelect(id, options) {
         }
     });
 
-    // Restore selection if still valid
+    // Restaura valor selecionado se ainda for válido
     if (options.includes(currentValue)) {
         select.value = currentValue;
     }
@@ -124,22 +124,22 @@ function fillSelect(id, options) {
 
 // ---------- FILTER FUNCTIONS ---------- //
 function filtrarDados() {
-    // Get filter values from both charts
+    // Coleta filtros de ambos os conjuntos
     const filters = {
         chart1: getFilters('regiao', 'sexo', 'natureza', 'idade'),
         chart2: getFilters('regiao2', 'sexo2', 'natureza2', 'idade2')
     };
 
-    // Apply filters to each chart's data
+    // Aplica filtros aos dados
     const filtrados1 = aplicarFiltros(dadosGlobais, filters.chart1);
     const filtrados2 = aplicarFiltros(dadosGlobais, filters.chart2);
 
-    // Update charts
+    // Atualiza gráficos com dados filtrados
     atualizarGrafico(filtrados1);
     atualizarGraficoAno(filtrados2);
 }
 
-// Helper to get filter values
+// Função auxiliar para obter filtros
 function getFilters(regiaoId, sexoId, naturezaId, idadeId) {
     return {
         regiao: document.getElementById(regiaoId).value,
@@ -149,29 +149,29 @@ function getFilters(regiaoId, sexoId, naturezaId, idadeId) {
     };
 }
 
-// Helper to apply filters to data
+// Função para aplicar os filtros aos dados
 function aplicarFiltros(dados, { regiao, sexo, natureza, idade }) {
-    let filtrados = [...dados];
+    let filtrados = [...dados]; // Clona os dados
 
+    // Aplica os filtros um a um
     if (regiao) filtrados = filtrados.filter(d => d.REGIAO_GEOGRAFICA === regiao);
     if (sexo) filtrados = filtrados.filter(d => d.SEXO === sexo);
     if (natureza) filtrados = filtrados.filter(d => d["NATUREZA JURIDICA"] === natureza);
 
     if (idade) {
-        const [min, max] = idade.split('-').map(Number);
+        const [min, max] = idade.split('-').map(Number); // Converte faixa etária
         filtrados = filtrados.filter(d => {
             const idadeNum = parseInt(d.IDADE);
-            return !isNaN(idadeNum) && idadeNum >= min && idadeNum <= max;
+            return !isNaN(idadeNum) && idadeNum >= min && idadeNum <= max; // Aplica filtro de idade
         });
     }
-
 
     return filtrados;
 }
 
 // ---------- CHART FUNCTIONS ---------- //
 function atualizarGrafico(dados) {
-    // Count cases by region
+    // Conta ocorrências por região
     const contagem = {};
     dados.forEach(d => {
         const regiao = d.REGIAO_GEOGRAFICA;
@@ -179,15 +179,15 @@ function atualizarGrafico(dados) {
     });
 
     const ctx = document.getElementById('grafico').getContext('2d');
-    if (grafico) grafico.destroy();
+    if (grafico) grafico.destroy(); // Destroi gráfico anterior se existir
 
     grafico = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: Object.keys(contagem),
+            labels: Object.keys(contagem), // Rótulos do eixo X
             datasets: [{
                 label: 'Casos por Região',
-                data: Object.values(contagem),
+                data: Object.values(contagem), // Valores do eixo Y
                 backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
@@ -206,21 +206,20 @@ function atualizarGrafico(dados) {
 }
 
 function atualizarGraficoAno(dados) {
-    // Group data by year
+    // Agrupa casos por ano
     const casosPorAno = {};
 
     dados.forEach(dado => {
         if (!dado.DATA) return;
-        const ano = dado.DATA.split('/')[2]; // Extract year from DD/MM/YYYY
+        const ano = dado.DATA.split('/')[2]; // Extrai ano da data DD/MM/AAAA
         casosPorAno[ano] = (casosPorAno[ano] || 0) + 1;
     });
 
-    // Sort years chronologically
-    const anos = Object.keys(casosPorAno).sort();
+    const anos = Object.keys(casosPorAno).sort(); // Ordena anos
     const contagens = anos.map(ano => casosPorAno[ano]);
 
     const ctx = document.getElementById('grafico-ano').getContext('2d');
-    if (graficoAno) graficoAno.destroy();
+    if (graficoAno) graficoAno.destroy(); // Destroi gráfico anterior se existir
 
     graficoAno = new Chart(ctx, {
         type: 'line',
@@ -254,16 +253,16 @@ function atualizarGraficoAno(dados) {
 // ---------- DATE FUNCTIONS ---------- //
 function parseDataBR(data) {
     if (!data) return new Date();
-    const [dia, mes, ano] = data.split('/');
-    return new Date(`${ano}-${mes}-${dia}`);
+    const [dia, mes, ano] = data.split('/'); // Separa DD/MM/AAAA
+    return new Date(`${ano}-${mes}-${dia}`); // Retorna objeto Date
 }
 
 function configurarIntervaloDatas(dados) {
     if (!dados.length) return;
 
     const datasConvertidas = dados.map(d => parseDataBR(d.DATA));
-    const minData = new Date(Math.min(...datasConvertidas));
-    const maxData = new Date(Math.max(...datasConvertidas));
+    const minData = new Date(Math.min(...datasConvertidas)); // Data mais antiga
+    const maxData = new Date(Math.max(...datasConvertidas)); // Data mais recente
 
     const minStr = minData.toISOString().split("T")[0];
     const maxStr = maxData.toISOString().split("T")[0];
@@ -279,11 +278,10 @@ function configurarIntervaloDatas(dados) {
 
 // ---------- INITIALIZATION ---------- //
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize both charts
-    carregarDados();
+    carregarDados(); // Carrega os dados ao iniciar
 
-    // Add filter event listeners to all filter controls
+    // Adiciona evento aos filtros
     document.querySelectorAll('.filtro, .chart-filter').forEach(filter => {
-        filter.addEventListener('change', filtrarDados);
+        filter.addEventListener('change', filtrarDados); // Atualiza gráficos ao mudar filtro
     });
 });

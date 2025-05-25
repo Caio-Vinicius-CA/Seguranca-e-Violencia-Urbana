@@ -1,30 +1,25 @@
 /* ===== BASE STYLES ===== */
+/* Definição de variáveis CSS para reutilização de cores e efeitos */
 :root {
-    --primary-dark: #8B0000;
-    /* Dark red for urgency/importance */
-    --primary: #C00000;
-    /* Main red for violence theme */
-    --primary-light: #FF6B6B;
-    /* Lighter red for accents */
-    --secondary: #333333;
-    /* Dark gray for text */
-    --light-bg: #F8F8F8;
-    /* Light background */
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --danger: #DC3545;
-    /* For high-alert elements */
-    --warning: #FFC107;
-    /* For warnings */
-    --safe: #28A745;
-    /* For positive indicators */
+    --primary-dark: #8B0000;        /* Vermelho escuro - destaca urgência ou importância */
+    --primary: #C00000;             /* Vermelho principal - tema de violência */
+    --primary-light: #FF6B6B;       /* Vermelho claro - detalhes ou realces */
+    --secondary: #333333;           /* Cinza escuro - cor padrão de texto */
+    --light-bg: #F8F8F8;            /* Cor clara de fundo */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil para caixas */
+    --danger: #DC3545;              /* Vermelho alerta - perigo */
+    --warning: #FFC107;             /* Amarelo alerta - aviso */
+    --safe: #28A745;                /* Verde - indica algo seguro ou positivo */
 }
 
+/* Reset básico para todos os elementos */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* Estilo padrão para html e body */
 html,
 body {
     width: 100%;
@@ -36,6 +31,7 @@ body {
 }
 
 /* ===== TYPOGRAPHY ===== */
+/* Títulos com destaque em vermelho escuro */
 h1,
 h2,
 h3 {
@@ -56,6 +52,7 @@ h2 {
 }
 
 /* ===== LAYOUT ===== */
+/* Container centralizado com largura máxima */
 .container, .container-header {
     max-width: 1200px;
     margin: 0 auto;
@@ -63,6 +60,7 @@ h2 {
 }
 
 /* ===== NAVIGATION & HEADER ===== */
+/* Cabeçalho com fundo vermelho escuro e sombra */
 .header {
     background-color: var(--primary-dark);
     color: white;
@@ -71,11 +69,13 @@ h2 {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Título no header em branco e sem borda */
 .header h1 {
     color: white;
     border-bottom: none;
 }
 
+/* Navegação horizontal com espaçamento entre links */
 .nav {
     display: flex;
     gap: 1.5rem;
@@ -91,15 +91,17 @@ h2 {
     transition: background-color 0.3s;
 }
 
+/* Efeito hover nos links */
 .nav a:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Link ativo com fundo levemente mais opaco */
 .nav a.active {
     background-color: rgba(255, 255, 255, 0.25);
 }
 
-
+/* Sub-linha animada ao passar o mouse */
 .nav a::after {
     content: '';
     position: absolute;
@@ -116,13 +118,14 @@ h2 {
     width: 80%;
 }
 
-/* Melhor contraste para estado focado (acessibilidade) */
+/* Acessibilidade: foco visível */
 .nav a:focus {
     outline: 2px solid rgba(255, 255, 255, 0.5);
     outline-offset: 2px;
 }
 
 /* ===== CHART CONTAINERS ===== */
+/* Seção de gráficos com cartão branco e sombra */
 .chart-section {
     background: white;
     border-radius: 8px;
@@ -140,6 +143,7 @@ h2 {
 }
 
 /* ===== FILTER CONTROLS ===== */
+/* Bloco de filtros com layout responsivo */
 .filters {
     display: flex;
     flex-wrap: wrap;
@@ -156,12 +160,14 @@ h2 {
     min-width: 200px;
 }
 
+/* Rótulos dos filtros */
 .filter-group label {
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: var(--primary-dark);
 }
 
+/* Campos de entrada e seleção */
 .filter-group select,
 .filter-group input {
     padding: 0.5rem;
@@ -170,6 +176,7 @@ h2 {
     font-size: 1rem;
 }
 
+/* Foco nos inputs */
 .filter-group select:focus,
 .filter-group input:focus {
     outline: none;
@@ -178,6 +185,7 @@ h2 {
 }
 
 /* ===== LOADING STATES ===== */
+/* Tela de carregamento do gráfico */
 .chart-loading {
     position: absolute;
     top: 0;
@@ -194,11 +202,13 @@ h2 {
     border-radius: 8px;
 }
 
+/* Ativa a tela de carregamento */
 .chart-loading.active {
     display: flex;
     opacity: 1;
 }
 
+/* Animação do spinner */
 .spinner {
     width: 40px;
     height: 40px;
@@ -215,7 +225,7 @@ h2 {
     }
 }
 
-/* Table Loading State */
+/* Tela de carregamento da tabela */
 #table-loading {
     position: absolute;
     top: 0;
@@ -236,15 +246,13 @@ h2 {
     color: var(--primary-dark);
 }
 
-/* Make sure table container has relative positioning */
+/* Garante posicionamento relativo para overlay */
 .table-container {
     position: relative;
-    /* your existing styles */
 }
 
-
-
 /* ===== DATA TABLE ===== */
+/* Estilo do container da tabela com rolagem */
 .table-container {
     display: block;
     max-height: 600px;
@@ -256,11 +264,13 @@ h2 {
     margin: 1rem 0;
 }
 
+/* Estilo base da tabela */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
+/* Células da tabela */
 th,
 td {
     padding: 12px 15px;
@@ -268,6 +278,7 @@ td {
     border-bottom: 1px solid #ddd;
 }
 
+/* Cabeçalho da tabela fixo e estilizado */
 th {
     background-color: var(--primary-dark);
     color: white;
@@ -276,6 +287,7 @@ th {
     z-index: 10;
 }
 
+/* Zebra striping e hover */
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
@@ -284,12 +296,14 @@ tr:hover {
     background-color: #f1f1f1;
 }
 
+/* Estilo extra no cabeçalho da tabela */
 .table-container thead th {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
+/* Ajustes específicos por ID */
 table#tabela td {
     padding-left: 20px;
 }
@@ -300,6 +314,7 @@ table#tabela td:nth-child(6) {
 }
 
 /* ===== PAGINATION ===== */
+/* Controles de paginação */
 #pagination {
     display: flex;
     justify-content: flex-start;
@@ -330,6 +345,7 @@ table#tabela td:nth-child(6) {
 }
 
 /* ===== RESPONSIVE ADJUSTMENTS ===== */
+/* Adaptações para telas pequenas */
 @media (max-width: 768px) {
     .filters {
         flex-direction: column;
@@ -342,5 +358,21 @@ table#tabela td:nth-child(6) {
 
     .chart-container {
         height: 300px;
+    }
+}
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .nav {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav a {
+        padding: 0.5rem;
+        text-align: center;
     }
 }

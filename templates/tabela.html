@@ -1,37 +1,33 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR"> <!-- Define o idioma da página como português do Brasil -->
   <head>
-    <meta charset="UTF-8" />
-    <title>Violência Urbana</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-    <!-- Chart.js -->
+    <meta charset="UTF-8" /> <!-- Define o conjunto de caracteres como UTF-8 -->
+    <title>Violência Urbana</title> <!-- Título da aba do navegador -->
+
+    <!-- Importa o CSS personalizado armazenado na pasta static/css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+    <!-- Biblioteca Chart.js para criação de gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- jQuery (necessário para DataTables) -->
+    <!-- Biblioteca jQuery necessária para o funcionamento do DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-    <!-- DataTables CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css"
-    />
+    <!-- Estilos do DataTables para a tabela -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
 
-    <!-- DataTables JS -->
+    <!-- Scripts JavaScript do DataTables e do recurso de rolagem -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
   </head>
   <body>
+    <!-- Cabeçalho da página com o título e links de navegação -->
     <header class="header">
       <div class="container">
         <h1>Monitor de Violência Urbana</h1>
         <nav class="nav">
+          <!-- Links de navegação para dashboard e tabela -->
           <a href="/">Dashboard</a>
           <a href="/tabela">Dados Completos</a>
         </nav>
@@ -39,18 +35,21 @@
     </header>
 
     <main class="container">
-      <h1 class="heading">Tabela de Dados</h1>
+      <h1 class="heading">Tabela de Dados</h1> <!-- Título principal da seção -->
 
       <div class="table-container">
-        <!-- Add this loading overlay -->
+        <!-- Overlay de carregamento exibido enquanto os dados são carregados -->
         <div id="table-loading" class="chart-loading">
           <div class="spinner"></div>
           <span>Carregando dados...</span>
         </div>
+
+        <!-- Tabela que será preenchida dinamicamente com os dados -->
         <table id="tabela" class="display">
           <thead>
             <tr>
-              <!-- Filtro Município -->
+              <!-- Filtros para cada coluna da tabela -->
+              <!-- Município: campo de texto -->
               <th>
                 Município<br />
                 <input
@@ -60,21 +59,21 @@
                   data-col="0"
                 />
               </th>
-              <!-- Filtro Região -->
+
+              <!-- Região: menu suspenso (select) com opções -->
               <th>
                 Região<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="1">
                   <option value="">Todos</option>
                   <option value="Agreste">Agreste</option>
                   <option value="Capital">Capital</option>
-                  <option value="Região Metropolitana">
-                    Região Metropolitana
-                  </option>
+                  <option value="Região Metropolitana">Região Metropolitana</option>
                   <option value="Sertão">Sertão</option>
                   <option value="Zona da Mata">Zona da Mata</option>
                 </select>
               </th>
-              <!-- Filtro Sexo -->
+
+              <!-- Sexo: menu suspenso -->
               <th>
                 Sexo<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="2">
@@ -84,7 +83,8 @@
                   <option value="Feminino">Feminino</option>
                 </select>
               </th>
-              <!-- Filtro Natureza -->
+
+              <!-- Natureza Jurídica: menu suspenso -->
               <th>
                 Natureza Jurídica<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="3">
@@ -92,12 +92,11 @@
                   <option value="Homicidio">Homicidio</option>
                   <option value="Feminicidio">Feminicidio</option>
                   <option value="Latrocinio">Latrocinio</option>
-                  <option value="Lesões corporais seguida de morte">
-                    Lesões corporais seguida de morte
-                  </option>
+                  <option value="Lesões corporais seguida de morte">Lesões corporais seguida de morte</option>
                 </select>
               </th>
-              <!-- Filtro Data -->
+
+              <!-- Data: dois campos do tipo date para intervalo inicial e final -->
               <th>
                 Data<br />
                 <input
@@ -113,7 +112,8 @@
                   style="width: 100px"
                 />
               </th>
-              <!-- Filtro Idade -->
+
+              <!-- Idade: filtro por faixa etária -->
               <th>
                 Idade<br />
                 <select
@@ -137,11 +137,16 @@
             </tr>
           </thead>
 
+          <!-- O corpo da tabela será preenchido via JavaScript com os dados carregados -->
           <tbody></tbody>
         </table>
       </div>
+
+      <!-- Div usada para paginação personalizada se necessário -->
       <div id="pagination" style="margin-top: 20px"></div>
     </main>
+
+    <!-- Script que contém a lógica para preencher e filtrar a tabela (JavaScript externo) -->
     <script src="{{ url_for('static', filename='js/table.js') }}"></script>
   </body>
 </html>
