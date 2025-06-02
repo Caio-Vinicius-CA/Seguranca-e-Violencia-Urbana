@@ -64,10 +64,10 @@ def dados():
     data_final = request.args.get('data_final')
     idade_min = request.args.get('idade_min', type=int)
     idade_max = request.args.get('idade_max', type=int)
-    
+
     # Começa a construir a query base
     query = Dado.query
-    
+
     # Aplica os filtros se forem fornecidos
     if regiao:
         query = query.filter(Dado.REGIAO_GEOGRAFICA == regiao)
@@ -75,7 +75,7 @@ def dados():
         query = query.filter(Dado.SEXO == sexo)
     if natureza:
         query = query.filter(Dado.NATUREZA_JURIDICA == natureza)
-    
+
     # Filtro de intervalo de datas (DATA no formato string DD/MM/YYYY)
     if data_inicial and data_final:
         try:
@@ -92,11 +92,11 @@ def dados():
             )
         except ValueError:
             pass  # Ignora erro caso a data seja inválida
-    
+
     # Filtro de faixa etária
     if idade_min is not None and idade_max is not None:
         query = query.filter(Dado.IDADE.between(idade_min, idade_max))
-    
+
     # Executa a query com paginação
     paginated_data = query.paginate(page=page, per_page=per_page, error_out=False)
     
