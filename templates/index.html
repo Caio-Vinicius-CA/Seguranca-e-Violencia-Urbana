@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <!-- Define a codificação de caracteres -->
     <meta charset="UTF-8" />
-
-    <!-- Define a escala inicial para dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Monitor de Violência Urbana</title>
 
-    <!-- Importa o CSS -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
 
-    <!-- Importa a biblioteca Chart.js para geração de gráficos -->
+    <!-- Importa da biblioteca Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
   <body>
-    <!-- Cabeçalho da página com título e navegação -->
+    <!-- Cabeçalho -->
     <header class="header">
       <div class="container-header">
         <h1>Monitor de Violência Urbana</h1>
         <nav class="nav">
-          <!-- Link para a página inicial com dashboards -->
           <a href="/">Dashboards</a>
-          <!-- Link para a página de tabela com os dados completos -->
           <a href="/tabela">Dados Completos</a>
         </nav>
       </div>
@@ -35,15 +28,14 @@
 
     <!-- Conteúdo principal da página -->
     <main class="container">
-      <!-- Seção do primeiro gráfico -->
+      <!-- Primeiro gráfico -->
       <section class="chart-section">
         <h2>Distribuição de Casos por Região</h2>
 
-        <!-- Filtros para refinar os dados do gráfico -->
+        <!-- Filtros -->
         <div class="filters">
           <div class="filter-group">
             <label for="regiao">Região:</label>
-            <!-- Dropdown de região com evento de filtro -->
             <select id="regiao" onchange="filtrarDados()">
               <option value="">Todas as Regiões</option>
             </select>
@@ -65,7 +57,6 @@
 
           <div class="filter-group">
             <label for="idade">Idade:</label>
-            <!-- Faixas etárias disponíveis para filtro -->
             <select id="idade" class="chart-filter" data-tipo="faixa-etaria">
               <option value="">Todas</option>
               <option value="1-17">1-17</option>
@@ -81,22 +72,21 @@
           </div>
         </div>
 
-        <!-- Contêiner do gráfico com animação de carregamento -->
+        <!-- Contêiner do gráfico -->
         <div class="chart-container">
           <div id="chart-loading" class="chart-loading">
             <div class="spinner"></div>
             <span>Carregando dados...</span>
           </div>
-          <!-- Área onde o gráfico será renderizado -->
           <canvas id="grafico"></canvas>
         </div>
       </section>
 
-      <!-- Segunda seção com gráfico de evolução anual -->
+      <!-- Segundo gráfico -->
       <section class="chart-section">
         <h2>Evolução Anual de Casos</h2>
 
-        <!-- Filtros para o gráfico anual -->
+        <!-- Filtros -->
         <div class="filters">
           <div class="filter-group">
             <label for="regiao2">Região:</label>
@@ -136,19 +126,18 @@
           </div>
         </div>
 
-        <!-- Gráfico de evolução anual com animação de carregamento -->
+        <!-- Contêiner do gráfico -->
         <div class="chart-container">
           <div id="year-chart-loading" class="chart-loading">
             <div class="spinner"></div>
             <span>Carregando dados anuais...</span>
           </div>
-          <!-- Área onde o segundo gráfico será renderizado -->
           <canvas id="grafico-ano"></canvas>
         </div>
       </section>
     </main>
 
-    <!-- Script principal da aplicação (interações e carregamento de dados) -->
+    <!-- Script principal -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>

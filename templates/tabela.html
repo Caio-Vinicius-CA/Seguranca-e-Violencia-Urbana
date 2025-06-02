@@ -2,26 +2,21 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <!-- Define o conjunto de caracteres como UTF-8 -->
-
-    <!-- Define a escala inicial para dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Violência Urbana</title>
 
-    <!-- Importa o CSS -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
 
-    <!-- Biblioteca Chart.js para criação de gráficos -->
+    <!-- Importa da biblioteca Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Biblioteca jQuery necessária para o funcionamento do DataTables -->
+    <!-- Biblioteca jQuery para o DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-    <!-- Estilos do DataTables para a tabela -->
+    <!-- Estilos do DataTables -->
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
@@ -31,39 +26,38 @@
       href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css"
     />
 
-    <!-- Scripts JavaScript do DataTables e do recurso de rolagem -->
+    <!-- Scripts JavaScript do DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
   </head>
+
   <body>
-    <!-- Cabeçalho da página com o título e links de navegação -->
+    <!-- Cabeçalho -->
     <header class="header">
       <div class="container">
         <h1>Monitor de Violência Urbana</h1>
         <nav class="nav">
-          <!-- Links de navegação para dashboard e tabela -->
-          <a href="/">Dashboard</a>
+          <a href="/">Dashboards</a>
           <a href="/tabela">Dados Completos</a>
         </nav>
       </div>
     </header>
 
+    <!-- Conteúdo principal da página -->
     <main class="container">
       <h1 class="heading">Tabela de Dados</h1>
 
+      <!-- Contêiner da tabela -->
       <div class="table-container">
-        <!-- Overlay de carregamento exibido enquanto os dados são carregados -->
         <div id="table-loading" class="chart-loading">
           <div class="spinner"></div>
           <span>Carregando dados...</span>
         </div>
 
-        <!-- Tabela que será preenchida dinamicamente com os dados -->
+        <!-- Tabela -->
         <table id="tabela" class="display">
           <thead>
             <tr>
-              <!-- Filtros para cada coluna da tabela -->
-              <!-- Município: campo de texto -->
               <th>
                 Município<br />
                 <input
@@ -74,7 +68,6 @@
                 />
               </th>
 
-              <!-- Região: menu suspenso (select) com opções -->
               <th>
                 Região<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="1">
@@ -89,7 +82,6 @@
                 </select>
               </th>
 
-              <!-- Sexo: menu suspenso -->
               <th>
                 Sexo<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="2">
@@ -100,7 +92,6 @@
                 </select>
               </th>
 
-              <!-- Natureza Jurídica: menu suspenso -->
               <th>
                 Natureza Jurídica<br />
                 <select onchange="filtrarTabela()" class="filtro" data-col="3">
@@ -114,7 +105,6 @@
                 </select>
               </th>
 
-              <!-- Data: dois campos do tipo date para intervalo inicial e final -->
               <th>
                 Data<br />
                 <input
@@ -131,7 +121,6 @@
                 />
               </th>
 
-              <!-- Idade: filtro por faixa etária -->
               <th>
                 Idade<br />
                 <select
@@ -155,16 +144,15 @@
             </tr>
           </thead>
 
-          <!-- O corpo da tabela será preenchido via JavaScript com os dados carregados -->
           <tbody></tbody>
         </table>
       </div>
 
-      <!-- Div usada para paginação personalizada se necessário -->
+      <!-- Paginação -->
       <div id="pagination" style="margin-top: 20px"></div>
     </main>
 
-    <!-- Script que contém a lógica para preencher e filtrar a tabela (JavaScript externo) -->
+    <!-- Script principal da tabela -->
     <script src="{{ url_for('static', filename='js/table.js') }}"></script>
   </body>
 </html>
