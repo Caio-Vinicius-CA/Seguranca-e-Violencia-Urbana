@@ -16,6 +16,10 @@ O sistema foi desenvolvido utilizando **Flask**, **HTML**, **CSS** e **JavaScrip
 
 ## Como Rodar o Projeto
 
+### Acesso Online
+O projeto pode ser acessado por qualquer indivíduo a partir do website hospedado no render:
+https://seguranca-e-violencia-urbana.onrender.comhttps://seguranca-e-violencia-urbana.onrender.com
+
 ### Pré-requisitos
 
 1. **Python 3.7+** instalado.
