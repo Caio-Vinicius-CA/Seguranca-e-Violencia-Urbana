@@ -49,7 +49,7 @@ def tabela():
 @app.route('/api/dados')
 def dados():
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 1000, type=int)
+    per_page = request.args.get('per_page', 7000, type=int)
     
     regiao = request.args.get('regiao')
     sexo = request.args.get('sexo')
