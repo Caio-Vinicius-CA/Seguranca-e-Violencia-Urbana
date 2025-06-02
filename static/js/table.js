@@ -2,7 +2,7 @@
 // Variáveis que armazenar os dados
 let dadosGlobais = [];  // Armazena todos os dados carregados
 let currentPage = 1;    // Página atual para paginação
-const perPage = 300;    // Itens por página para paginação
+const perPage = 1000;    // Itens por página para paginação
 
 // ---------- CARREGAMENTO DOS DADOS ---------- //
 // Função que carrega os dados da API e atualiza a tabela
